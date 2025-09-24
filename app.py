@@ -2,14 +2,20 @@ from flask import Flask, render_template, request, redirect
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-app = Flask(__name__, template_folder='../templates', static_folder='../static')
+app = Flask(__name__, template_folder='templates', static_folder='static')
 
 # Google Sheets setup
-scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',
-         "https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive"
+]
 creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
 client = gspread.authorize(creds)
-sheet = client.open("StudentSheet").sheet1  # Replace with your sheet name
+
+# Use your sheet's display name here!
+sheet = client.open("StudentSheet").sheet1
 
 @app.route("/", methods=['GET'])
 def home():
@@ -24,5 +30,5 @@ def add_student():
     sheet.append_row([name, roll, clas])
     return redirect("/")
 
-def handler(request):
-    return app(request)
+if __name__ == "__main__":
+    app.run(debug=True)
